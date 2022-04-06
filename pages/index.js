@@ -55,7 +55,7 @@ export default function Home() {
             <h2>Resultat</h2>
             <Divider light />
             {/* Legger inn en <p> for hver setning lagret i result */}
-            {result.map(n => <p>{n}</p>)}
+            {result.map(n => <p key={result.findIndex(g => g === n)}>{n}</p>)}
           </span> : null}
       </main>
     </div>
