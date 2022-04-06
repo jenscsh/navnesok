@@ -1,3 +1,6 @@
+## NAVNESØK
+Søk etter navnet ditt fra en liste over de mest populære navnene. Et fullt navn, Gro Hansen, er lagt til for testing.
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
