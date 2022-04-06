@@ -23,7 +23,7 @@ export default function Home() {
         if (x.type === "family") text += `Det er ${x.count > 3 ? x.count : "0-3"} personer som har ${e} som etternavn. \n`;
       })
     });
-    if (text == "") text = `Det er 0-3 personer som heter ${names.join(" ")}`;
+    if (text == "") text = `Det er 0-3 personer som heter ${names.join(" ")}.`;
     setResult(text);
   }
 
