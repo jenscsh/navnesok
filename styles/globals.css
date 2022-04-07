@@ -17,3 +17,32 @@ a {
 * {
   box-sizing: border-box;
 }
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 4px;
+}
+
+tr:nth-child(even) {
+  background-color: rgb(205, 247, 205);
+}
+
+table {
+  width: 100%;
+}
+
+#sok {
+  margin: 24px auto;
+  padding: 8px;
+  background-color: rgb(205, 247, 205);
+}
+#sok > * {
+  margin: 8px 0;
+}
+#result > * {
+  margin: 8px 0;
+}

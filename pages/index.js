@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import { useState } from 'react';
-import { Button, Divider, Input } from '@statisticsnorway/ssb-component-library';
+import { Text, Divider, Input } from '@statisticsnorway/ssb-component-library';
 import data from './nameSearchPop300';
 
 export default function Home() {
@@ -21,22 +21,43 @@ export default function Home() {
     //Søker opp det fulle navnet hvis det er mer enn et navn for å legge til fakta om hvor mange som heter det. Et fullt navn er lagt til i JSON: Gro Hansen
     if (names.length > 1) {
       let fullNameRes = nameData.find(n => n.name === names.join(" ").toUpperCase());
-      if (fullNameRes && fullNameRes.type === "full") text.push(`Det er ${fullNameRes.count > 3 ? fullNameRes.count : "0-3"} personer som har ${names.join(" ")} som fornavn og etternavn.`);
+      if (fullNameRes && fullNameRes.type === "full") text.push(<Text key={fullNameRes.id}>Det er <b>{fullNameRes.count > 3 ? fullNameRes.count : "0-3"}</b> personer som har <b>{names.join(" ")}</b> som fornavn og etternavn.<br /></Text>);
     }
     //Søker i database for hvert enkelt navn i søket
     names.forEach(name => {
       let searchRes = nameData.filter(n => n.name === name.toUpperCase());
       //Sjekker hva slags type navn det er og legger til fakta tilpasset dette
       searchRes.map(x => {
-        if (x.type === "firstgiven") text.push(`Det er ${x.count > 3 ? x.count : "0-3"} personer som har ${name} som fornavn.`);
-        if (x.type === "onlygiven") text.push(`Det er ${x.count > 3 ? x.count : "0-3"} personer som bare har ${name} som fornavn.`);
-        if (x.type === "family") text.push(`Det er ${x.count > 3 ? x.count : "0-3"} personer som har ${name} som etternavn.`);
+        if (x.type === "firstgiven") text.push(<Text key={x.id}>Det er <b>{x.count > 3 ? x.count : "0-3"}</b> personer som har <b>{name}</b> som fornavn.<br /></Text>);
+        if (x.type === "onlygiven") text.push(<Text key={x.id}>Det er <b>{x.count > 3 ? x.count : "0-3"}</b> personer som bare har <b>{name}</b> som fornavn.<br /></Text>);
+        if (x.type === "family") text.push(<Text key={x.id}>Det er <b>{x.count > 3 ? x.count : "0-3"}</b> personer som har <b>{name}</b> som etternavn.<br /></Text>);
       })
     });
     //Hvis ikke det var noen fakta som ble lagt til, altså ingen treff på søk, vil bruker få beskjed om at 0-3 personer har det navnet
-    if (text.length === 0) text.push(`Det er 0-3 personer som heter ${names.join(" ")}.`);
+    if (text.length === 0) text.push(<Text>Det er 0-3 personer som heter {names.join(" ")}.</Text>);
     //Setter result til array med fakta
     setResult(text);
+  }
+
+  function SetUpTable() {
+    let firstnames = [];
+    let lastnames = [];
+    let result = [];
+    for (let e of nameData) {
+      if (e.type === "firstgiven" && firstnames.length < 10) firstnames.push(e);
+      if (e.type === "family" && lastnames.length < 10) lastnames.push(e);
+      if (firstnames.length === 10 && lastnames.length === 10) break;
+    };
+    for (let i = 0; i < 10; i++) {
+      result.push(
+        <tr key={i}>
+          <td>{firstnames[i].name}</td>
+          <td>{firstnames[i].count}</td>
+          <td>{lastnames[i].name}</td>
+          <td>{lastnames[i].count}</td>
+        </tr>)
+    }
+    return result;
   }
 
   return (
@@ -47,16 +68,34 @@ export default function Home() {
       </Head>
 
       <main>
-        {/* Søkefelt, trigger SearchName-funksjonen på callback */}
-        <Input searchField label={"Skriv navnet ditt her"} submitCallback={SearchName} />
-        {/* Resultat fra søk, vises bare om result har noe data */}
-        {result.length > 0 ?
-          <span>
-            <h2>Resultat</h2>
-            <Divider light />
-            {/* Legger inn en <p> for hver setning lagret i result */}
-            {result.map(n => <p key={result.findIndex(g => g === n)}>{n}</p>)}
-          </span> : null}
+        <table>
+          <caption><h1>De vanligste navnene i Norge</h1></caption>
+          <tr>
+            <th colSpan={2}>Fornavn</th>
+            <th colSpan={2}>Etternavn</th>
+          </tr>
+          <tr>
+            <th>Navn</th>
+            <th>Antall</th>
+            <th>Navn</th>
+            <th>Antall</th>
+          </tr>
+          <SetUpTable />
+        </table>
+
+        <article id='sok'>
+          <h1>Se statistikk over navnet ditt</h1>
+          {/* Søkefelt, trigger SearchName-funksjonen på callback */}
+          <Input searchField label={"Skriv navnet ditt her"} submitCallback={SearchName} />
+          {/* Resultat fra søk, vises bare om result har noe data */}
+          {result.length > 0 ?
+            <span id='result'>
+              <h2>Resultat</h2>
+              <Divider light />
+              {/* Legger inn en <p> for hver setning lagret i result */}
+              {result}
+            </span> : null}
+        </article>
       </main>
     </div>
   )
